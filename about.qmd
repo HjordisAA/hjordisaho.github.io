@@ -1,0 +1,9 @@
+---
+title: "About"
+---
+
+My name is Hjördis, I am a current senior at Mount Holyoke College. This is a new website. I am working on putting together a portfolio of work I have done.
+
+```{r}
+1 + 1
+```
