@@ -3,9 +3,9 @@ title: "STAT 244-SC"
 ---
 
 
-```{r, echo=FALSE}
-library(dplyr)
+```{r,echo=FALSE}
 library(ggplot2)
+library(dplyr)
 library(GGally)
 hsb2=read.csv("hsb2.csv")
 ```
