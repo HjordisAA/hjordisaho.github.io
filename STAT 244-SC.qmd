@@ -3,7 +3,7 @@ title: "STAT 244-SC"
 ---
 
 
-```{r}
+```{r, echo=FALSE}
 library(dplyr)
 library(ggplot2)
 library(GGally)
