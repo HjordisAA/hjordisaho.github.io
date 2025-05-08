@@ -1,3 +1,85 @@
 ---
-title: "Test"
+title: "STAT 244-SC"
 ---
+
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(GGally)
+hsb2=read.csv("hsb2.csv")
+```
+
+# Final Project
+
+  For our final project, Maya Garcia and I examined a set of potential factors that may influence high school students' standardized test scores. Our goal was to better understand how certain demographic characteristics and academic performance measures relate to one another—particularly how they may predict writing scores. The data used in this project comes from the hsb2 dataset, a random sample of size 200 published by UCLA Institute for Digital Research & Education Statistical Consulting. The sample was taken from the 1,100 High School students who participated in the "High School and Beyond" survey conducted in 1980 by the National Center for Education Statistics. The dataset includes variables such as gender, race, socioeconomic status, and standardized test scores in reading, math, science, and writing. In this study, we aim to explore which set of factors may have the strongest predictive power for writing performance. The analysis may offer insights into patterns of educational achievement of High School students and contribute to discussions about equity in education.
+  
+## The Data
+
+**Variables in the Dataset**
+
+1. id: Student ID number. 
+
+2. read: Standardized reading score.
+
+3. write: Standardized writing score.
+
+4. math: Standardized math score.
+
+5. science: Standardized science score.
+
+6. socst: Standardized social studies score.
+
+7. gender: Student's gender (female or male)
+
+8. race: Student's race (african american, asian, hispanic, or white)
+
+9. ses: Socio economic status of student's family (low,middle, or high)
+
+10. schtyp: Type of school (public or private)
+
+11. prog: Type of program (general, academic, vocational)
+
+#### Visualization
+
+**Peak at the data**
+
+```{r}
+head(hsb2)
+```
+
+**Count plot for each of variable of interest** 
+```{r}
+hsb2 %>% ggplot(aes(x = read)) +geom_bar(fill = "lightblue") +theme_classic()  +
+labs(x = 'Standardized Reading Test Scores', y = 'Count')
+
+hsb2 %>% ggplot(aes(x = write)) +geom_bar(fill = "lightblue") +theme_classic()  +
+labs(x = 'Standardized Writing Test Scores', y = 'Count')
+
+hsb2 %>% ggplot(aes(x = ses)) +geom_bar(fill = "lightblue") +theme_classic()  +
+labs(x = 'Socioeconomic status', y = 'Count')
+
+hsb2 %>% ggplot(aes(x = schtyp)) +geom_bar(fill = "lightblue") +theme_classic()+
+labs(x = 'School Type', y = 'Count')
+
+hsb2 %>% ggplot(aes(x = prog)) +geom_bar(fill = "lightblue") +theme_classic()+
+labs(x = 'Program Type', y = 'Count')
+
+hsb2 %>% ggplot(aes(x = gender)) +geom_bar(fill = "lightblue") +theme_classic()+
+labs(x = 'Program Type', y = 'Count')
+
+hsb2 %>% ggplot(aes(x = math)) +geom_bar(fill = "lightblue") +theme_classic()+
+labs(x = 'Program Type', y = 'Count')
+
+hsb2 %>% ggplot(aes(x = science)) +geom_bar(fill = "lightblue") +theme_classic()+
+labs(x = 'Program Type', y = 'Count')
+
+hsb2 %>% ggplot(aes(x = socst)) +geom_bar(fill = "lightblue") +theme_classic()+
+labs(x = 'Program Type', y = 'Count')
+```
+
+**Generalized Pairs Plots**
+```{r}
+ggpairs(hsb2 %>% select(write,read,ses,schtyp,prog))
+```
+
