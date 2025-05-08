@@ -10,8 +10,8 @@ website:
         text: Home
       - href: about.qmd
         text: About
-      - href: test.qmd
-        text: Test
+      - href: STAT 244-SC.qmd
+        text: STAT 244-SC
 
 format:
   html:
