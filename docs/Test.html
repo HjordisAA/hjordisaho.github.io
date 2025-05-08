@@ -179,27 +179,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<div class="cell">
-<div class="cell-output cell-output-stderr">
-<pre><code>
-Attaching package: 'dplyr'</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>The following objects are masked from 'package:stats':
-
-    filter, lag</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>The following objects are masked from 'package:base':
-
-    intersect, setdiff, setequal, union</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Registered S3 method overwritten by 'GGally':
-  method from   
-  +.gg   ggplot2</code></pre>
-</div>
-</div>
 <section id="final-project" class="level1">
 <h1>Final Project</h1>
 <p>For our final project, Maya Garcia and I examined a set of potential factors that may influence high school students’ standardized test scores. Our goal was to better understand how certain demographic characteristics and academic performance measures relate to one another—particularly how they may predict writing scores. The data used in this project comes from the hsb2 dataset, a random sample of size 200 published by UCLA Institute for Digital Research &amp; Education Statistical Consulting. The sample was taken from the 1,100 High School students who participated in the “High School and Beyond” survey conducted in 1980 by the National Center for Education Statistics. The dataset includes variables such as gender, race, socioeconomic status, and standardized test scores in reading, math, science, and writing. In this study, we aim to explore which set of factors may have the strongest predictive power for writing performance. The analysis may offer insights into patterns of educational achievement of High School students and contribute to discussions about equity in education.</p>
@@ -223,7 +202,7 @@ Attaching package: 'dplyr'</code></pre>
 <h4 class="anchored" data-anchor-id="visualization">Visualization</h4>
 <p><strong>Peak at the data</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(hsb2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(hsb2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   id gender  race    ses schtyp       prog read write math science socst
 1  70   male white    low public    general   57    52   41      47    57
@@ -236,8 +215,8 @@ Attaching package: 'dplyr'</code></pre>
 </div>
 <p><strong>Count plot for each of variable of interest</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>hsb2 <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> read)) <span class="sc">+</span><span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span><span class="fu">theme_classic</span>()  <span class="sc">+</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'Standardized Reading Test Scores'</span>, <span class="at">y =</span> <span class="st">'Count'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>hsb2 <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> read)) <span class="sc">+</span><span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span><span class="fu">theme_classic</span>()  <span class="sc">+</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'Standardized Reading Test Scores'</span>, <span class="at">y =</span> <span class="st">'Count'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -245,8 +224,8 @@ Attaching package: 'dplyr'</code></pre>
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>hsb2 <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> write)) <span class="sc">+</span><span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span><span class="fu">theme_classic</span>()  <span class="sc">+</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'Standardized Writing Test Scores'</span>, <span class="at">y =</span> <span class="st">'Count'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>hsb2 <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> write)) <span class="sc">+</span><span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span><span class="fu">theme_classic</span>()  <span class="sc">+</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'Standardized Writing Test Scores'</span>, <span class="at">y =</span> <span class="st">'Count'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -254,8 +233,8 @@ Attaching package: 'dplyr'</code></pre>
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>hsb2 <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> ses)) <span class="sc">+</span><span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span><span class="fu">theme_classic</span>()  <span class="sc">+</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'Socioeconomic status'</span>, <span class="at">y =</span> <span class="st">'Count'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>hsb2 <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> ses)) <span class="sc">+</span><span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span><span class="fu">theme_classic</span>()  <span class="sc">+</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'Socioeconomic status'</span>, <span class="at">y =</span> <span class="st">'Count'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -263,8 +242,8 @@ Attaching package: 'dplyr'</code></pre>
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>hsb2 <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> schtyp)) <span class="sc">+</span><span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span><span class="fu">theme_classic</span>()<span class="sc">+</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'School Type'</span>, <span class="at">y =</span> <span class="st">'Count'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>hsb2 <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> schtyp)) <span class="sc">+</span><span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span><span class="fu">theme_classic</span>()<span class="sc">+</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'School Type'</span>, <span class="at">y =</span> <span class="st">'Count'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -272,8 +251,8 @@ Attaching package: 'dplyr'</code></pre>
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>hsb2 <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> prog)) <span class="sc">+</span><span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span><span class="fu">theme_classic</span>()<span class="sc">+</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'Program Type'</span>, <span class="at">y =</span> <span class="st">'Count'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>hsb2 <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> prog)) <span class="sc">+</span><span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span><span class="fu">theme_classic</span>()<span class="sc">+</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'Program Type'</span>, <span class="at">y =</span> <span class="st">'Count'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -281,8 +260,8 @@ Attaching package: 'dplyr'</code></pre>
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>hsb2 <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> gender)) <span class="sc">+</span><span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span><span class="fu">theme_classic</span>()<span class="sc">+</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'Program Type'</span>, <span class="at">y =</span> <span class="st">'Count'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>hsb2 <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> gender)) <span class="sc">+</span><span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span><span class="fu">theme_classic</span>()<span class="sc">+</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'Program Type'</span>, <span class="at">y =</span> <span class="st">'Count'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -290,8 +269,8 @@ Attaching package: 'dplyr'</code></pre>
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>hsb2 <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> math)) <span class="sc">+</span><span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span><span class="fu">theme_classic</span>()<span class="sc">+</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'Program Type'</span>, <span class="at">y =</span> <span class="st">'Count'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>hsb2 <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> math)) <span class="sc">+</span><span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span><span class="fu">theme_classic</span>()<span class="sc">+</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'Program Type'</span>, <span class="at">y =</span> <span class="st">'Count'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -299,8 +278,8 @@ Attaching package: 'dplyr'</code></pre>
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>hsb2 <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> science)) <span class="sc">+</span><span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span><span class="fu">theme_classic</span>()<span class="sc">+</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'Program Type'</span>, <span class="at">y =</span> <span class="st">'Count'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>hsb2 <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> science)) <span class="sc">+</span><span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span><span class="fu">theme_classic</span>()<span class="sc">+</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'Program Type'</span>, <span class="at">y =</span> <span class="st">'Count'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -308,8 +287,8 @@ Attaching package: 'dplyr'</code></pre>
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>hsb2 <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> socst)) <span class="sc">+</span><span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span><span class="fu">theme_classic</span>()<span class="sc">+</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'Program Type'</span>, <span class="at">y =</span> <span class="st">'Count'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>hsb2 <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> socst)) <span class="sc">+</span><span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span><span class="fu">theme_classic</span>()<span class="sc">+</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'Program Type'</span>, <span class="at">y =</span> <span class="st">'Count'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -320,7 +299,7 @@ Attaching package: 'dplyr'</code></pre>
 </div>
 <p><strong>Generalized Pairs Plots</strong></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggpairs</span>(hsb2 <span class="sc">%&gt;%</span> <span class="fu">select</span>(write,read,ses,schtyp,prog))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggpairs</span>(hsb2 <span class="sc">%&gt;%</span> <span class="fu">select</span>(write,read,ses,schtyp,prog))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
