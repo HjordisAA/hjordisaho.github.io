@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>STAT 244-SC – Hjördis Aho’s Website</title>
+<title>STAT 244-SC (Sp 25) – Hjördis Aho’s Website</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -101,6 +101,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -152,7 +181,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul>
   <li><a href="#final-project" id="toc-final-project" class="nav-link active" data-scroll-target="#final-project">Final Project</a>
   <ul class="collapse">
-  <li><a href="#the-data" id="toc-the-data" class="nav-link" data-scroll-target="#the-data">The Data</a></li>
+  <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data">Data</a>
+  <ul class="collapse">
+  <li><a href="#data-cleaning" id="toc-data-cleaning" class="nav-link" data-scroll-target="#data-cleaning">Data Cleaning</a></li>
+  <li><a href="#exploratory-data-analysis" id="toc-exploratory-data-analysis" class="nav-link" data-scroll-target="#exploratory-data-analysis">Exploratory Data Analysis</a></li>
+  </ul></li>
+  <li><a href="#methods" id="toc-methods" class="nav-link" data-scroll-target="#methods">Methods</a>
+  <ul class="collapse">
+  <li><a href="#k-fold-cross-validation" id="toc-k-fold-cross-validation" class="nav-link" data-scroll-target="#k-fold-cross-validation">K-Fold Cross Validation</a></li>
+  <li><a href="#variable-subset-selection" id="toc-variable-subset-selection" class="nav-link" data-scroll-target="#variable-subset-selection">Variable Subset Selection</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  <li><a href="#source" id="toc-source" class="nav-link" data-scroll-target="#source">Source:</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -162,7 +202,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">STAT 244-SC</h1>
+<h1 class="title">STAT 244-SC (Sp 25)</h1>
 </div>
 
 
@@ -181,28 +221,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="final-project" class="level1">
 <h1>Final Project</h1>
-<p>For our final project, Maya Garcia and I examined a set of potential factors that may influence high school students’ standardized test scores. Our goal was to better understand how certain demographic characteristics and academic performance measures relate to one another—particularly how they may predict writing scores. The data used in this project comes from the hsb2 dataset, a random sample of size 200 published by UCLA Institute for Digital Research &amp; Education Statistical Consulting. The sample was taken from the 1,100 High School students who participated in the “High School and Beyond” survey conducted in 1980 by the National Center for Education Statistics. The dataset includes variables such as gender, race, socioeconomic status, and standardized test scores in reading, math, science, and writing. In this study, we aim to explore which set of factors may have the strongest predictive power for writing performance. The analysis may offer insights into patterns of educational achievement of High School students and contribute to discussions about equity in education.</p>
-<section id="the-data" class="level2">
-<h2 class="anchored" data-anchor-id="the-data">The Data</h2>
-<p><strong>Variables in the Dataset</strong></p>
-<ol type="1">
-<li><p>id: Student ID number.</p></li>
-<li><p>read: Standardized reading score.</p></li>
-<li><p>write: Standardized writing score.</p></li>
-<li><p>math: Standardized math score.</p></li>
-<li><p>science: Standardized science score.</p></li>
-<li><p>socst: Standardized social studies score.</p></li>
-<li><p>gender: Student’s gender (female or male)</p></li>
-<li><p>race: Student’s race (african american, asian, hispanic, or white)</p></li>
-<li><p>ses: Socio economic status of student’s family (low,middle, or high)</p></li>
-<li><p>schtyp: Type of school (public or private)</p></li>
-<li><p>prog: Type of program (general, academic, vocational)</p></li>
-</ol>
-<section id="visualization" class="level4">
-<h4 class="anchored" data-anchor-id="visualization">Visualization</h4>
-<p><strong>Peak at the data</strong></p>
+<p>In this study, we examined a set of potential factors that may influence high school students’ standardized test scores. Our goal was to better understand how certain demographic characteristics and academic performance measures relate to one another—particularly how they may predict writing scores. Specifically, we explore the predictive power of familial socioeconomic status, types of school attended, types of program enrolled in, and standardized reading scores on the standardized writing scores of high school students. To assess the relative importance and predictive accuracy of these variables, we conducted k-fold cross validation to compare the performance of two linear models alongside variable selection. This approach allowed us to evaluate model generalizability and identify which factors most consistently contribute to writing performance. Our findings from this analysis may offer insights into patterns of educational achievement among High School students and contribute to larger discussions about equity in education.</p>
+<section id="data" class="level2">
+<h2 class="anchored" data-anchor-id="data">Data</h2>
+<p>The data used in this project comes from the hsb2 dataset, a random sample of size 200 published by UCLA Institute for Digital Research &amp; Education Statistical Consulting. The sample was drawn from the 1,100 high school students who participated in the “High School and Beyond” survey conducted in 1980 by the National Center for Education Statistics. The purpose of this survey was to better understand what factors of the educational system influence the educational and occupational performance of students before and after graduation. The dataset includes variables such as gender, race, socioeconomic status, and standardized test scores in reading, writing, math, science, and social studies. For this analysis, we focused on four predictors: socioeconomic status, type of school attended (public or private), type of academic program enrolled in (general, academic, or vocations), and reading scores, and one response variable, writing scores.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(hsb2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>hsb2<span class="ot">=</span><span class="fu">read.csv</span>(<span class="st">"hsb2.csv"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(hsb2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   id gender  race    ses schtyp       prog read write math science socst
 1  70   male white    low public    general   57    52   41      47    57
@@ -213,101 +238,42 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 6 113   male white middle public   academic   44    52   51      63    61</code></pre>
 </div>
 </div>
-<p><strong>Count plot for each of variable of interest</strong></p>
+<section id="data-cleaning" class="level3">
+<h3 class="anchored" data-anchor-id="data-cleaning">Data Cleaning</h3>
+<p>Data cleaning was the first step of our study. All variable names were easy to use incode and all quantitative variables had the correct type, thus none of these variables needed to be changed. However, when we checked the variable type for our categorical variables, we saw they were type ‘character’; we then changed them to type factor.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>hsb2 <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> read)) <span class="sc">+</span><span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span><span class="fu">theme_classic</span>()  <span class="sc">+</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'Standardized Reading Test Scores'</span>, <span class="at">y =</span> <span class="st">'Count'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Test_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Checking our quantitative variable types</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sapply</span>(hsb2[,<span class="fu">c</span>(<span class="st">"read"</span>,<span class="st">"write"</span>)], class)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     read     write 
+"integer" "integer" </code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Checking our cateforial variable types</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sapply</span>(hsb2[,<span class="fu">c</span> (<span class="st">"ses"</span>,<span class="st">"schtyp"</span>,<span class="st">"prog"</span>)], class)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        ses      schtyp        prog 
+"character" "character" "character" </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>hsb2 <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> write)) <span class="sc">+</span><span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span><span class="fu">theme_classic</span>()  <span class="sc">+</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'Standardized Writing Test Scores'</span>, <span class="at">y =</span> <span class="st">'Count'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Test_files/figure-html/unnamed-chunk-3-2.png" class="img-fluid figure-img" width="672"></p>
-</figure>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Changing them to type factor</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>hsb2<span class="sc">$</span>ses <span class="ot">=</span> <span class="fu">as.factor</span>(hsb2<span class="sc">$</span>ses)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>hsb2<span class="sc">$</span>schtyp <span class="ot">=</span> <span class="fu">as.factor</span>(hsb2<span class="sc">$</span>schtyp)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>hsb2<span class="sc">$</span>prog <span class="ot">=</span> <span class="fu">as.factor</span>(hsb2<span class="sc">$</span>prog )</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>hsb2<span class="sc">$</span>gender<span class="ot">=</span><span class="fu">as.factor</span>(hsb2<span class="sc">$</span>gender)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</div>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>hsb2 <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> ses)) <span class="sc">+</span><span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span><span class="fu">theme_classic</span>()  <span class="sc">+</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'Socioeconomic status'</span>, <span class="at">y =</span> <span class="st">'Count'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Test_files/figure-html/unnamed-chunk-3-3.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>hsb2 <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> schtyp)) <span class="sc">+</span><span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span><span class="fu">theme_classic</span>()<span class="sc">+</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'School Type'</span>, <span class="at">y =</span> <span class="st">'Count'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Test_files/figure-html/unnamed-chunk-3-4.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>hsb2 <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> prog)) <span class="sc">+</span><span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span><span class="fu">theme_classic</span>()<span class="sc">+</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'Program Type'</span>, <span class="at">y =</span> <span class="st">'Count'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Test_files/figure-html/unnamed-chunk-3-5.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>hsb2 <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> gender)) <span class="sc">+</span><span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span><span class="fu">theme_classic</span>()<span class="sc">+</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'Program Type'</span>, <span class="at">y =</span> <span class="st">'Count'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Test_files/figure-html/unnamed-chunk-3-6.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>hsb2 <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> math)) <span class="sc">+</span><span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span><span class="fu">theme_classic</span>()<span class="sc">+</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'Program Type'</span>, <span class="at">y =</span> <span class="st">'Count'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Test_files/figure-html/unnamed-chunk-3-7.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>hsb2 <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> science)) <span class="sc">+</span><span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span><span class="fu">theme_classic</span>()<span class="sc">+</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'Program Type'</span>, <span class="at">y =</span> <span class="st">'Count'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Test_files/figure-html/unnamed-chunk-3-8.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>hsb2 <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> socst)) <span class="sc">+</span><span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span><span class="fu">theme_classic</span>()<span class="sc">+</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'Program Type'</span>, <span class="at">y =</span> <span class="st">'Count'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="Test_files/figure-html/unnamed-chunk-3-9.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<p><strong>Generalized Pairs Plots</strong></p>
+<p>In order to look for missing values, we counted the original number of rows in our dataset and then counted again after filtering all NAs from the data. We started off with 200 rows and after filtering the dataset, 200 rows remained, thus the data contained no missing values.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggpairs</span>(hsb2 <span class="sc">%&gt;%</span> <span class="fu">select</span>(write,read,ses,schtyp,prog))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
-`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
-`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
-`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
-`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
-`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(hsb2) <span class="co">#checking our starting number of rows</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 200</code></pre>
 </div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Removing missing data points</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>hsb2<span class="ot">=</span> hsb2 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(read), <span class="sc">!</span><span class="fu">is.na</span>(write),<span class="sc">!</span><span class="fu">is.na</span>(ses),<span class="sc">!</span><span class="fu">is.na</span>(schtyp),<span class="sc">!</span><span class="fu">is.na</span>(prog))</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(hsb2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 200</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>hsb2 <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> read)) <span class="sc">+</span><span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span><span class="fu">theme_classic</span>()  <span class="sc">+</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'Standardized Reading Test Scores'</span>, <span class="at">y =</span> <span class="st">'Count'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -315,10 +281,428 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </figure>
 </div>
 </div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>hsb2 <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> write)) <span class="sc">+</span><span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span><span class="fu">theme_classic</span>()  <span class="sc">+</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'Standardized Writing Test Scores'</span>, <span class="at">y =</span> <span class="st">'Count'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Test_files/figure-html/unnamed-chunk-4-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
-
-
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Checking for any empty strings</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>hsb2 <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> ses)) <span class="sc">+</span><span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span><span class="fu">theme_classic</span>()  <span class="sc">+</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'Socioeconomic status'</span>, <span class="at">y =</span> <span class="st">'Count'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Test_files/figure-html/unnamed-chunk-4-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>hsb2 <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> schtyp)) <span class="sc">+</span><span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span><span class="fu">theme_classic</span>()<span class="sc">+</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'School Type'</span>, <span class="at">y =</span> <span class="st">'Count'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Test_files/figure-html/unnamed-chunk-4-4.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>hsb2 <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> prog)) <span class="sc">+</span><span class="fu">geom_bar</span>(<span class="at">fill =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span><span class="fu">theme_classic</span>()<span class="sc">+</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'Program Type'</span>, <span class="at">y =</span> <span class="st">'Count'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Test_files/figure-html/unnamed-chunk-4-5.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 </section>
+<section id="exploratory-data-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="exploratory-data-analysis">Exploratory Data Analysis</h3>
+<p><strong>Numerical Summaries</strong></p>
+<p>Our research question we are trying to find is how are writing scores affected by multiple variables of the high school senior. The variables we are going to look at is reading scores, socioeconomic status, school type, and program type.</p>
+<p>Let’s first review our quantitative variables. For our standardized writing scores, our mean score is around 52.77 with range from 31 to 67. Our standard deviation is rounded to 9.5. For our standardized reading scores, our mean is 52.23, with range from 28 to 76. Our standard deviation for these scores is rounded to 10.3. We have 200 observations.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(hsb2<span class="sc">$</span>write)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  31.00   45.75   54.00   52.77   60.00   67.00 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sd</span>(hsb2<span class="sc">$</span>write)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 9.478586</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(hsb2<span class="sc">$</span>read)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  28.00   44.00   50.00   52.23   60.00   76.00 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sd</span>(hsb2<span class="sc">$</span>read)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 10.25294</code></pre>
+</div>
+</div>
+<p>In terms of categorical variables, we can see that for socioeconomic status for students, the majority of them, 47.5%, are in the middle class. For school type, most of the senior students, 84%, are in public school. And finally for program type, most seniors, 52.5% are in academic program.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>hsb2 <span class="sc">%&gt;%</span> <span class="fu">count</span>(ses) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">percentage =</span> n<span class="sc">/</span><span class="fu">sum</span>(n)<span class="sc">*</span><span class="dv">100</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     ses  n percentage
+1   high 58       29.0
+2    low 47       23.5
+3 middle 95       47.5</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>hsb2 <span class="sc">%&gt;%</span> <span class="fu">count</span>(schtyp) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">percentage =</span> n<span class="sc">/</span><span class="fu">sum</span>(n)<span class="sc">*</span><span class="dv">100</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   schtyp   n percentage
+1 private  32         16
+2  public 168         84</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>hsb2 <span class="sc">%&gt;%</span> <span class="fu">count</span>(prog) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">percentage =</span> n<span class="sc">/</span><span class="fu">sum</span>(n)<span class="sc">*</span><span class="dv">100</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        prog   n percentage
+1   academic 105       52.5
+2    general  45       22.5
+3 vocational  50       25.0</code></pre>
+</div>
+</div>
+<p><strong>Visual Summary</strong></p>
+<p>We have already seen some plots of our data in our data cleaning section but I will also be providing a bit more to visualize our data and the relationships between each other. Starting with our response variable, standardized writing scores.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(hsb2, <span class="fu">aes</span>(<span class="at">y=</span>write)) <span class="sc">+</span> <span class="fu">geom_boxplot</span>(<span class="at">fill =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Standardized Writing Scores"</span>, <span class="at">y =</span> <span class="st">"Count"</span>)<span class="sc">+</span> <span class="fu">theme_classic</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Test_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Earlier in the data cleaning, we showed data visualization for each variable, now let us compare them to our response variable.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(hsb2, <span class="fu">aes</span>(<span class="at">x =</span> ses,<span class="at">y=</span>write)) <span class="sc">+</span> <span class="fu">geom_boxplot</span>(<span class="at">fill =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span> <span class="fu">labs</span>( <span class="at">y=</span> <span class="st">"Writing Score"</span>, <span class="at">x =</span> <span class="st">"Socioeconomic Status"</span>)<span class="sc">+</span> <span class="fu">theme_classic</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Test_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(hsb2, <span class="fu">aes</span>(<span class="at">x =</span> schtyp,<span class="at">y=</span> write)) <span class="sc">+</span> <span class="fu">geom_boxplot</span>(<span class="at">fill =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"Writing Score"</span>, <span class="at">x =</span> <span class="st">"School Type"</span>)<span class="sc">+</span> <span class="fu">theme_classic</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Test_files/figure-html/unnamed-chunk-8-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(hsb2, <span class="fu">aes</span>(<span class="at">x =</span> prog,<span class="at">y=</span> write)) <span class="sc">+</span> <span class="fu">geom_boxplot</span>(<span class="at">fill =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"Writing Score"</span>, <span class="at">x =</span> <span class="st">"Program Type"</span>)<span class="sc">+</span> <span class="fu">theme_classic</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Test_files/figure-html/unnamed-chunk-8-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="methods" class="level2">
+<h2 class="anchored" data-anchor-id="methods">Methods</h2>
+<section id="k-fold-cross-validation" class="level3">
+<h3 class="anchored" data-anchor-id="k-fold-cross-validation">K-Fold Cross Validation</h3>
+<p>The first statistical test we conducted was K-fold cross validation. Cross validation is a frequently used technique for evaluating the performance of predictive models by assessing how well they are able to generalize to data that is independent of the training set. In K-fold cross validation, this is done through randomly partitioning the dataset into k approximately equal-sized groups or folds. The model is trained on k-1 folds and then tested on the remaining fold. This process is repeated k times so that each fold serves as the test set exactly one time. Mathematically, K-folds cross validation follows this procedure,</p>
+<ul>
+<li><p>Divide the data into k partitions of approximately equal size.</p></li>
+<li><p>Repeated the following for each group j (j=1,2,…,k)</p></li>
+<li><p>assign group j to the test set.</p>
+<ul>
+<li><p>Fit a model on the remaining k-1 partitions or the training set.</p></li>
+<li><p>Use this model to predict the response for all observations in group j.</p></li>
+<li><p>Calculate the needed error metric for group j. In our case we used the MSE</p></li>
+</ul></li>
+<li><p>Combine this information to estimate model quality</p></li>
+</ul>
+<p><span class="math display">\[CV_{(k)}=\frac{1}{k}\sum_{j=1}^{k}MSE_J\]</span></p>
+<p>In our study, we use the MSE as our error metric. The MSE penalizes larger errors more heavily than other metrics. This is important for our data because we are predicting test scores and thus making large errors in our prediction can have large impacts. One large disadvantage of using the MSE would be that it is sensitive to outliers. Since there may be some students whose test scores are considered outliers, this may influence the MSE more heavily than other metrics.</p>
+<p><span class="math inline">\(MSE=\frac{1}{n}\sum_{i=1}^{n}(y_i-\hat{y}_i)^2=(RMSE)^2\)</span></p>
+<p>The goal of cross validation is to estimate how well a model will perform on independent datasets to prevent overfitting. Overfitting can cause harmful biases that may be causing patterns in the training data to be generalized to future data, ultimately further perpetuating inaccurate, and sometimes dangerous information. This is especially important when conducting educational research as overfitting can lead to the spread of misleading and sometimes dangerous information that could impact a large proportion of the younger population. Cross validation provides more fair and accurate prediction of the population of interest.</p>
+<p>In our study, we analysed the CV MSE of the following models using three different values of k. The models were as follows,</p>
+<p>Model 1: ‘write’ ~ ‘gender’ + ‘ses’ + ‘schtyp’ + ‘prog’ + ‘read’ + ’ math’ + ‘science’ + ‘socst’</p>
+<p>Model 2: ‘write’ ~ ‘ses’ + ’ schtyp’ + ‘prog’ + ‘read’</p>
+<p>First, we implemented a 10-fold cross validation,</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">24667</span>)</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>lm_spec<span class="ot">=</span><span class="fu">linear_reg</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"regression"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"lm"</span>)</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Model Estimation</span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>model1<span class="ot">=</span>lm_spec <span class="sc">%&gt;%</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(write<span class="sc">~</span>gender<span class="sc">+</span>ses<span class="sc">+</span>schtyp<span class="sc">+</span>prog<span class="sc">+</span>read<span class="sc">+</span>math<span class="sc">+</span>science<span class="sc">+</span>socst, <span class="at">data=</span>hsb2)</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>model2<span class="ot">=</span>lm_spec <span class="sc">%&gt;%</span></span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(write<span class="sc">~</span>ses<span class="sc">+</span>schtyp<span class="sc">+</span>prog<span class="sc">+</span>read, <span class="at">data=</span>hsb2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">9359</span>)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>model1_cv<span class="ot">=</span>lm_spec <span class="sc">%&gt;%</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit_resamples</span>(</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>    write<span class="sc">~</span>gender<span class="sc">+</span>ses<span class="sc">+</span>schtyp<span class="sc">+</span>prog<span class="sc">+</span>read<span class="sc">+</span>math<span class="sc">+</span>science<span class="sc">+</span>socst,</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">resamples=</span><span class="fu">vfold_cv</span>(hsb2,<span class="at">v=</span><span class="dv">10</span>),</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">metrics=</span><span class="fu">metric_set</span>(mae, rmse, rsq)</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>model2_cv<span class="ot">=</span>lm_spec <span class="sc">%&gt;%</span></span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit_resamples</span>(</span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>    write<span class="sc">~</span>ses<span class="sc">+</span>schtyp<span class="sc">+</span>prog<span class="sc">+</span>read,</span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">resamples=</span><span class="fu">vfold_cv</span>(hsb2,<span class="at">v=</span><span class="dv">10</span>),</span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">metrics=</span><span class="fu">metric_set</span>(mae,rmse,rsq)</span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<blockquote class="blockquote">
+<p>In order to retrieve the MSE for all folds in our cross validation we must first unnest the cross validation to obtain each individual fold and the RMSE. We then squared the RMSE to obtain the MSE for each individual fold, and following the k-fold cross validation procedure, averaged the MSE for each model. These MSE values are what is printed below.</p>
+</blockquote>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get fold by fold and pull out the rmse for each. </span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>m1_rmse<span class="ot">=</span>model1_cv <span class="sc">%&gt;%</span> <span class="fu">unnest</span>(.metrics) <span class="sc">%&gt;%</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(.metric<span class="sc">==</span><span class="st">"rmse"</span>)</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>m2_rmse<span class="ot">=</span>model2_cv <span class="sc">%&gt;%</span> <span class="fu">unnest</span>(.metrics) <span class="sc">%&gt;%</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(.metric<span class="sc">==</span><span class="st">"rmse"</span>)</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Sqaure the found RMSE values</span></span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>m1_mse<span class="ot">=</span>m1_rmse<span class="sc">$</span>.estimate<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>m2_mse<span class="ot">=</span>m2_rmse<span class="sc">$</span>.estimate<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Average the MSE values across the 10 folds for each model</span></span>
+<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a>m1_cv_mse<span class="ot">=</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">10</span>)<span class="sc">*</span><span class="fu">sum</span>(m1_mse)</span>
+<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a>m2_cv_mse<span class="ot">=</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">10</span>)<span class="sc">*</span><span class="fu">sum</span>(m2_mse)</span>
+<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the CV MSE for both models. </span></span>
+<span id="cb37-18"><a href="#cb37-18" aria-hidden="true" tabindex="-1"></a>m1_cv_mse</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 40.57728</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>m2_cv_mse</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 58.62453</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Summarize RMSE for model 1</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>m1_summary <span class="ot">&lt;-</span> m1_rmse <span class="sc">%&gt;%</span></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">model =</span> <span class="st">"Model 1"</span>,</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_rmse =</span> <span class="fu">mean</span>(.estimate),</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_rmse =</span> <span class="fu">sd</span>(.estimate),</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_mse =</span> <span class="fu">mean</span>(.estimate<span class="sc">^</span><span class="dv">2</span>),</span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_mse =</span> <span class="fu">sd</span>(.estimate<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Summarize RMSE for model 2</span></span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>m2_summary <span class="ot">&lt;-</span> m2_rmse <span class="sc">%&gt;%</span></span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">model =</span> <span class="st">"Model 2"</span>,</span>
+<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_rmse =</span> <span class="fu">mean</span>(.estimate),</span>
+<span id="cb41-16"><a href="#cb41-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_rmse =</span> <span class="fu">sd</span>(.estimate),</span>
+<span id="cb41-17"><a href="#cb41-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_mse =</span> <span class="fu">mean</span>(.estimate<span class="sc">^</span><span class="dv">2</span>),</span>
+<span id="cb41-18"><a href="#cb41-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_mse =</span> <span class="fu">sd</span>(.estimate<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb41-19"><a href="#cb41-19" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb41-20"><a href="#cb41-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-21"><a href="#cb41-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine into one summary table</span></span>
+<span id="cb41-22"><a href="#cb41-22" aria-hidden="true" tabindex="-1"></a>model_metrics_summary <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(m1_summary, m2_summary)</span>
+<span id="cb41-23"><a href="#cb41-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-24"><a href="#cb41-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the table</span></span>
+<span id="cb41-25"><a href="#cb41-25" aria-hidden="true" tabindex="-1"></a>model_metrics_summary</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 5
+  model   mean_rmse sd_rmse mean_mse sd_mse
+  &lt;chr&gt;       &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt;
+1 Model 1      6.30   0.986     40.6   12.2
+2 Model 2      7.60   0.968     58.6   14.9</code></pre>
+</div>
+</div>
+<blockquote class="blockquote">
+<p>We found that the CV MSE for model 1 is, 40.577 while the CV MSE for model 2 is 58.625.</p>
+</blockquote>
+<p>Next, we conducted a leave one out cross validation of the two models.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1376987</span>)</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>k<span class="ot">=</span><span class="fu">nrow</span>(hsb2)<span class="sc">-</span><span class="dv">1</span></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Performing K=199 CV</span></span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>model1_loocv <span class="ot">=</span> lm_spec <span class="sc">%&gt;%</span></span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit_resamples</span>(</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>    write <span class="sc">~</span> gender <span class="sc">+</span> ses <span class="sc">+</span> schtyp <span class="sc">+</span> prog <span class="sc">+</span> read <span class="sc">+</span> math <span class="sc">+</span> science <span class="sc">+</span> socst,</span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">resamples =</span> <span class="fu">vfold_cv</span>(hsb2,<span class="at">v=</span>k),</span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">metrics =</span> <span class="fu">metric_set</span>(mae, rmse)</span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a>model2_loocv <span class="ot">=</span> lm_spec <span class="sc">%&gt;%</span></span>
+<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit_resamples</span>(</span>
+<span id="cb43-15"><a href="#cb43-15" aria-hidden="true" tabindex="-1"></a>    write <span class="sc">~</span> ses <span class="sc">+</span> schtyp <span class="sc">+</span> prog <span class="sc">+</span> read,</span>
+<span id="cb43-16"><a href="#cb43-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">resamples =</span> <span class="fu">vfold_cv</span>(hsb2,<span class="at">v=</span>k),</span>
+<span id="cb43-17"><a href="#cb43-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">metrics =</span> <span class="fu">metric_set</span>(mae, rmse)</span>
+<span id="cb43-18"><a href="#cb43-18" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb43-19"><a href="#cb43-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-20"><a href="#cb43-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculated the CV MSE for model 1 </span></span>
+<span id="cb43-21"><a href="#cb43-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-22"><a href="#cb43-22" aria-hidden="true" tabindex="-1"></a>m1_loo_rmse<span class="ot">=</span>model1_loocv <span class="sc">%&gt;%</span> <span class="fu">unnest</span>(.metrics) <span class="sc">%&gt;%</span></span>
+<span id="cb43-23"><a href="#cb43-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(.metric<span class="sc">==</span><span class="st">"rmse"</span>)</span>
+<span id="cb43-24"><a href="#cb43-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-25"><a href="#cb43-25" aria-hidden="true" tabindex="-1"></a>m1_loo_mse<span class="ot">=</span>m1_loo_rmse<span class="sc">$</span>.estimate<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb43-26"><a href="#cb43-26" aria-hidden="true" tabindex="-1"></a>m1_loo_mse<span class="ot">=</span>(<span class="dv">1</span><span class="sc">/</span>k)<span class="sc">*</span><span class="fu">sum</span>(m1_loo_mse)</span>
+<span id="cb43-27"><a href="#cb43-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-28"><a href="#cb43-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-29"><a href="#cb43-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Calulate the CV MSE for model 2</span></span>
+<span id="cb43-30"><a href="#cb43-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-31"><a href="#cb43-31" aria-hidden="true" tabindex="-1"></a>m2_loo_rmse<span class="ot">=</span>model2_loocv <span class="sc">%&gt;%</span> <span class="fu">unnest</span>(.metrics) <span class="sc">%&gt;%</span></span>
+<span id="cb43-32"><a href="#cb43-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(.metric<span class="sc">==</span><span class="st">"rmse"</span>)</span>
+<span id="cb43-33"><a href="#cb43-33" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb43-34"><a href="#cb43-34" aria-hidden="true" tabindex="-1"></a>m2_loo_mse<span class="ot">=</span>m2_loo_rmse<span class="sc">$</span>.estimate<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb43-35"><a href="#cb43-35" aria-hidden="true" tabindex="-1"></a>m2_loo_mse<span class="ot">=</span>(<span class="dv">1</span><span class="sc">/</span>k)<span class="sc">*</span><span class="fu">sum</span>(m2_loo_mse)</span>
+<span id="cb43-36"><a href="#cb43-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-37"><a href="#cb43-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-38"><a href="#cb43-38" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the CV MSE for both models. </span></span>
+<span id="cb43-39"><a href="#cb43-39" aria-hidden="true" tabindex="-1"></a>(m1_loo_mse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 39.32325</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>(m2_loo_mse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 57.82414</code></pre>
+</div>
+</div>
+<blockquote class="blockquote">
+<p>We can see that the 199-Fold CV MSE for Model 1 is 39.323, and the 199-fold CV MSE for Model 2 is 57.824. This shows that Model 1 has the lowest CV MSE when k=199.</p>
+</blockquote>
+<p>Finally, we implemented a 75-fold Cross Validation. Since we tested K=10 and K=199, this provides information into the CV-MSE when k is between the two previously found values.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">239762</span>)</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Performing k=75 CV on both models</span></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>model1_75 <span class="ot">=</span> lm_spec <span class="sc">%&gt;%</span></span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit_resamples</span>(</span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>    write <span class="sc">~</span> gender <span class="sc">+</span> ses <span class="sc">+</span> schtyp <span class="sc">+</span> prog <span class="sc">+</span> read <span class="sc">+</span> math <span class="sc">+</span> science <span class="sc">+</span> socst,</span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">resamples =</span> <span class="fu">vfold_cv</span>(hsb2,<span class="at">v=</span><span class="dv">75</span>),</span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">metrics =</span> <span class="fu">metric_set</span>(mae, rmse, rsq)</span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a>model2_75 <span class="ot">=</span> lm_spec <span class="sc">%&gt;%</span></span>
+<span id="cb47-12"><a href="#cb47-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit_resamples</span>(</span>
+<span id="cb47-13"><a href="#cb47-13" aria-hidden="true" tabindex="-1"></a>    write <span class="sc">~</span> ses <span class="sc">+</span> schtyp <span class="sc">+</span> prog <span class="sc">+</span> read,</span>
+<span id="cb47-14"><a href="#cb47-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">resamples =</span> <span class="fu">vfold_cv</span>(hsb2,<span class="at">v=</span><span class="dv">75</span>),</span>
+<span id="cb47-15"><a href="#cb47-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">metrics =</span> <span class="fu">metric_set</span>(mae, rmse, rsq)</span>
+<span id="cb47-16"><a href="#cb47-16" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb47-17"><a href="#cb47-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-18"><a href="#cb47-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculated the CV MSE for model 1 </span></span>
+<span id="cb47-19"><a href="#cb47-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-20"><a href="#cb47-20" aria-hidden="true" tabindex="-1"></a>m1_75_rmse<span class="ot">=</span>model1_75 <span class="sc">%&gt;%</span> <span class="fu">unnest</span>(.metrics) <span class="sc">%&gt;%</span></span>
+<span id="cb47-21"><a href="#cb47-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(.metric<span class="sc">==</span><span class="st">"rmse"</span>)</span>
+<span id="cb47-22"><a href="#cb47-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-23"><a href="#cb47-23" aria-hidden="true" tabindex="-1"></a>m1_75_mse<span class="ot">=</span>m1_75_rmse<span class="sc">$</span>.estimate<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb47-24"><a href="#cb47-24" aria-hidden="true" tabindex="-1"></a>m1_75_mse<span class="ot">=</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">75</span>)<span class="sc">*</span><span class="fu">sum</span>(m1_75_mse)</span>
+<span id="cb47-25"><a href="#cb47-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-26"><a href="#cb47-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-27"><a href="#cb47-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Calulate the CV MSE for model 2</span></span>
+<span id="cb47-28"><a href="#cb47-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-29"><a href="#cb47-29" aria-hidden="true" tabindex="-1"></a>m2_75_rmse<span class="ot">=</span>model2_75 <span class="sc">%&gt;%</span> <span class="fu">unnest</span>(.metrics) <span class="sc">%&gt;%</span></span>
+<span id="cb47-30"><a href="#cb47-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(.metric<span class="sc">==</span><span class="st">"rmse"</span>)</span>
+<span id="cb47-31"><a href="#cb47-31" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb47-32"><a href="#cb47-32" aria-hidden="true" tabindex="-1"></a>m2_75_mse<span class="ot">=</span>m2_75_rmse<span class="sc">$</span>.estimate<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb47-33"><a href="#cb47-33" aria-hidden="true" tabindex="-1"></a>m2_75_mse<span class="ot">=</span>(<span class="dv">1</span><span class="sc">/</span><span class="dv">75</span>)<span class="sc">*</span><span class="fu">sum</span>(m2_75_mse)</span>
+<span id="cb47-34"><a href="#cb47-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-35"><a href="#cb47-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-36"><a href="#cb47-36" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the CV MSE for both models. </span></span>
+<span id="cb47-37"><a href="#cb47-37" aria-hidden="true" tabindex="-1"></a>(m1_75_mse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 39.88911</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>(m2_75_mse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 57.52963</code></pre>
+</div>
+</div>
+<blockquote class="blockquote">
+<p>We find that the 75-Fold CV MSE for model 1 is, 39.889, while the 75-Fold CV MSE for model 2 is 57.530.</p>
+</blockquote>
+<p>Notice that for Model 1, when k=199, the CV error is the smallest. For model 2, we notice that the CV error is smallest for k=75. Both models seem to perform better when K is larger than 10. Based on the all three calculated CV tests, we see a clearly that the CV MSE for Model 1 is consistently lower than that of Model 2. Due to this persistent results, we will select Model 1 as our final model.</p>
+<p>Model 1: ‘write’ ~ ‘gender’ + ‘ses’ + ‘schtyp’ + ‘prog’ + ‘read’ + ’ math’ + ‘science’ + ‘socst’</p>
+</section>
+<section id="variable-subset-selection" class="level3">
+<h3 class="anchored" data-anchor-id="variable-subset-selection">Variable Subset Selection</h3>
+<p>Now, we used backward stepwise selection to select our model and which variables are efficient for us. We build a model with all p possible predictors and then we repeat the following until only one predictor remains:</p>
+<ul>
+<li><p>Remove the 1 predictor that increases the MSE/MAE by the least</p></li>
+<li><p>Build a model with the remaining predictors.</p></li>
+</ul>
+<p>We then pick the best model. This method helps us balance accuracy and ensuring we avoid overfitting.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Model</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>lm_spec <span class="ot">=</span> <span class="fu">linear_reg</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"lm"</span>) <span class="sc">%&gt;%</span> <span class="fu">set_mode</span>(<span class="st">"regression"</span>)</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a><span class="co">#Full Model </span></span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>lm_spec <span class="sc">%&gt;%</span> <span class="fu">fit</span>(write <span class="sc">~</span> gender <span class="sc">+</span> ses <span class="sc">+</span> schtyp <span class="sc">+</span> prog <span class="sc">+</span> read <span class="sc">+</span> math <span class="sc">+</span> science <span class="sc">+</span> socst, <span class="at">data =</span> hsb2) <span class="sc">%&gt;%</span> <span class="fu">tidy</span>() <span class="sc">%&gt;%</span> <span class="fu">mutate</span> (<span class="at">p.value =</span> <span class="fu">round</span>(p.value, <span class="dv">4</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 11 × 5
+   term           estimate std.error statistic p.value
+   &lt;chr&gt;             &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+ 1 (Intercept)      15.0      3.85       3.89   0.0001
+ 2 gendermale       -5.37     0.889     -6.04   0     
+ 3 seslow            0.851    1.31       0.648  0.518 
+ 4 sesmiddle        -0.149    1.06      -0.141  0.888 
+ 5 schtyppublic     -1.07     1.22      -0.877  0.382 
+ 6 proggeneral      -1.07     1.19      -0.896  0.371 
+ 7 progvocational   -1.74     1.27      -1.36   0.174 
+ 8 read              0.114    0.0657     1.74   0.0841
+ 9 math              0.207    0.0704     2.94   0.0037
+10 science           0.260    0.0628     4.14   0.0001
+11 socst             0.216    0.0556     3.90   0.0001</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Model Selection </span></span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>model_8predictors <span class="ot">=</span> lm_spec <span class="sc">%&gt;%</span> <span class="fu">fit_resamples</span>(write<span class="sc">~</span> gender <span class="sc">+</span> ses <span class="sc">+</span> schtyp <span class="sc">+</span> prog <span class="sc">+</span> read <span class="sc">+</span> math <span class="sc">+</span> science <span class="sc">+</span> socst, <span class="at">resamples =</span> <span class="fu">vfold_cv</span>(hsb2, <span class="at">v =</span> <span class="dv">10</span>), <span class="at">metrics =</span> <span class="fu">metric_set</span>(mae))</span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>model_7predictors <span class="ot">=</span> lm_spec <span class="sc">%&gt;%</span> <span class="fu">fit_resamples</span>(write<span class="sc">~</span> gender <span class="sc">+</span> ses <span class="sc">+</span> schtyp <span class="sc">+</span> prog <span class="sc">+</span> read <span class="sc">+</span> math <span class="sc">+</span> socst, <span class="at">resamples =</span> <span class="fu">vfold_cv</span>(hsb2, <span class="at">v =</span> <span class="dv">10</span>), <span class="at">metrics =</span> <span class="fu">metric_set</span>(mae))</span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>model_6predictors <span class="ot">=</span> lm_spec <span class="sc">%&gt;%</span> <span class="fu">fit_resamples</span>(write<span class="sc">~</span> ses <span class="sc">+</span> schtyp <span class="sc">+</span> prog <span class="sc">+</span> read <span class="sc">+</span> math <span class="sc">+</span> socst, <span class="at">resamples =</span> <span class="fu">vfold_cv</span>(hsb2, <span class="at">v =</span> <span class="dv">10</span>), <span class="at">metrics =</span> <span class="fu">metric_set</span>(mae))</span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>model_5predictors <span class="ot">=</span> lm_spec <span class="sc">%&gt;%</span> <span class="fu">fit_resamples</span>(write <span class="sc">~</span> ses <span class="sc">+</span> schtyp <span class="sc">+</span> prog <span class="sc">+</span> read <span class="sc">+</span> math, <span class="at">resamples =</span> <span class="fu">vfold_cv</span>(hsb2, <span class="at">v =</span> <span class="dv">10</span>), <span class="at">metrics =</span> <span class="fu">metric_set</span>(mae))</span>
+<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>model_4predictors <span class="ot">=</span> lm_spec <span class="sc">%&gt;%</span> <span class="fu">fit_resamples</span>(write <span class="sc">~</span> ses <span class="sc">+</span> schtyp <span class="sc">+</span> prog <span class="sc">+</span> read, <span class="at">resamples =</span> <span class="fu">vfold_cv</span>(hsb2, <span class="at">v =</span> <span class="dv">10</span>), <span class="at">metrics =</span> <span class="fu">metric_set</span>(mae))</span>
+<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a>model_3predictors <span class="ot">=</span> lm_spec <span class="sc">%&gt;%</span> <span class="fu">fit_resamples</span>(write <span class="sc">~</span> ses <span class="sc">+</span> prog <span class="sc">+</span> read, <span class="at">resamples =</span> <span class="fu">vfold_cv</span>(hsb2, <span class="at">v =</span> <span class="dv">10</span>), <span class="at">metrics =</span> <span class="fu">metric_set</span>(mae))</span>
+<span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a>model_2predictors <span class="ot">=</span> lm_spec <span class="sc">%&gt;%</span> <span class="fu">fit_resamples</span>(write <span class="sc">~</span> ses <span class="sc">+</span> read, <span class="at">resamples =</span> <span class="fu">vfold_cv</span>(hsb2, <span class="at">v =</span> <span class="dv">10</span>), <span class="at">metrics =</span> <span class="fu">metric_set</span>(mae))</span>
+<span id="cb53-9"><a href="#cb53-9" aria-hidden="true" tabindex="-1"></a>model_1predictors <span class="ot">=</span> lm_spec <span class="sc">%&gt;%</span> <span class="fu">fit_resamples</span>(write <span class="sc">~</span> read, <span class="at">resamples =</span> <span class="fu">vfold_cv</span>(hsb2, <span class="at">v =</span> <span class="dv">10</span>), <span class="at">metrics =</span> <span class="fu">metric_set</span>(mae))</span>
+<span id="cb53-10"><a href="#cb53-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-11"><a href="#cb53-11" aria-hidden="true" tabindex="-1"></a><span class="co">#Results</span></span>
+<span id="cb53-12"><a href="#cb53-12" aria-hidden="true" tabindex="-1"></a>results <span class="ot">=</span> <span class="fu">bind_rows</span>( model_1predictors <span class="sc">%&gt;%</span> <span class="fu">collect_metrics</span>()<span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">predictors =</span> <span class="dv">1</span>),model_2predictors <span class="sc">%&gt;%</span> <span class="fu">collect_metrics</span>()<span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">predictors =</span> <span class="dv">2</span>),model_3predictors <span class="sc">%&gt;%</span> <span class="fu">collect_metrics</span>()<span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">predictors =</span> <span class="dv">3</span>),model_4predictors <span class="sc">%&gt;%</span> <span class="fu">collect_metrics</span>()<span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">predictors =</span> <span class="dv">4</span>),model_5predictors <span class="sc">%&gt;%</span> <span class="fu">collect_metrics</span>()<span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">predictors =</span> <span class="dv">5</span>),model_6predictors <span class="sc">%&gt;%</span> <span class="fu">collect_metrics</span>()<span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">predictors =</span> <span class="dv">6</span>),model_7predictors <span class="sc">%&gt;%</span> <span class="fu">collect_metrics</span>()<span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">predictors =</span> <span class="dv">7</span>),model_8predictors <span class="sc">%&gt;%</span> <span class="fu">collect_metrics</span>()<span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">predictors =</span> <span class="dv">8</span>))</span>
+<span id="cb53-13"><a href="#cb53-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-14"><a href="#cb53-14" aria-hidden="true" tabindex="-1"></a><span class="co">#Plot them out</span></span>
+<span id="cb53-15"><a href="#cb53-15" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(results <span class="sc">%&gt;%</span> <span class="fu">filter</span>(.metric <span class="sc">==</span> <span class="st">"mae"</span>) , <span class="fu">aes</span>(<span class="at">x =</span> predictors, <span class="at">y =</span> mean)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span> <span class="fu">geom_line</span>(<span class="at">color =</span> <span class="st">"lightblue"</span>) <span class="sc">+</span> <span class="fu">theme_classic</span>()<span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"MAE vs Num of Predictors"</span>, <span class="at">x =</span><span class="st">" Num of Predictors"</span>, <span class="at">y=</span><span class="st">"MAE"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Test_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Based on our graph, we can see that our lowest MAE is with all eight of our predictors. As we continued to remove a predictor each time, our MAE increased which means that all variable are significant and contribute to our model and response variable.</p>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>After our K-Fold Cross-Validation method and backward stepwise selection method, they gave us the both results and we determined that Model 1 is the best. Model 1, includes all eight predictors (gender, ses, schtyp, prog, read, math, science, socst) had the lowest MAE, mean absolute error, with both methods.</p>
+<p>Model 1 is able to provided the most significant model for standardized writing scores as it shows a comprehensive view of the student’s academic and demographic statistics. They all contribute to a students’ writing scores which is what we are testing. We originally picked the four predictive variables (ses, schtyp, prog, and read) because we believed those were the only significant ones.</p>
+<p>However, through statistical analysis, we saw that additional variables (math, science, gender) help explain variance in the standardized writing scores. To conclude, through analysis we cannot accurately predict the student’s writing performance by only a subset of variables. Based on our methods, we need all variables which lets us know the students’ full demographics and academic statistics, which helps us accurately predict student’s writing scores to the best we can.</p>
+</section>
+<section id="source" class="level2">
+<h2 class="anchored" data-anchor-id="source">Source:</h2>
+<p>National Center for Education Statistics - Statistical Consulting. (n.d.). <em>High School &amp; Beyond (HS&amp;B) - overview</em>. High School &amp; Beyond (HS&amp;B) - Overview. <a href="https://nces.ed.gov/surveys/hsb/" class="uri">https://nces.ed.gov/surveys/hsb/</a></p>
+<p>Exploring Data with Graphic; R Learning Modules. UCLA: Statistical Consulting Group. from <a href="https://stats.oarc.ucla.edu/r/modules/exploring-data-with-graphics/" class="uri">https://stats.oarc.ucla.edu/r/modules/exploring-data-with-graphics/</a> (accessed April 28, 2025).</p>
+
+
 </section>
 </section>
 
